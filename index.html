@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00ff00">
+<style>
+body{margin:0;font-family:monospace;background:#000;color:#0f0}
+header{display:flex;border-bottom:1px solid #0f0}
+header button{flex:1;padding:12px;background:#000;color:#0f0;border:none;border-right:1px solid #0f0;cursor:pointer}
+header button.active{background:#0f0;color:#000}
+section{display:none;height:calc(100vh - 50px)}
+section.active{display:block}
+iframe{width:100%;height:100%;border:none}
+#searchBox{padding:20px}
+input,select,button{width:100%;margin-top:10px;padding:10px;background:#000;color:#0f0;border:1px solid #0f0}
+#offline{display:none;color:#f44}
+</style>
+</head>
+<body>
+
+<header>
+  <button id="tabSearch" class="active" onclick="show('search')">Bos Search</button>
+  <button id="tabGame" onclick="show('game')">Game</button>
+</header>
+
+<section id="search" class="active">
+  <div id="searchBox">
+    <input id="q" placeholder="Search...">
+    <select id="engine">
+      <option value="ddg">DuckDuckGo</option>
+      <option value="science">Science</option>
+      <option value="bing">Bing</option>
+      <option value="scholar">Scholar</option>
+    </select>
+    <button onclick="search()">Search</button>
+    <div id="offline">Offline – search disabled</div>
+  </div>
+</section>
+
+<section id="game">
+  <div style="padding:10px">
+    <button onclick="playBuiltIn()">Play built‑in game</button>
+    <input type="file" webkitdirectory multiple onchange="loadLocalGame(this)">
+  </div>
+  <iframe id="gameFrame"></iframe>
+</section>
+
+<script>
+function show(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('header button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('active');
+}
+
+function search(){
+  if(!navigator.onLine){
+    document.getElementById('offline').style.display='block';
+    return;
+  }
+  const q=document.getElementById('q').value.trim();
+  if(!q)return;
+  const e=document.getElementById('engine').value;
+  let url='';
+  if(e==='ddg') url='https://duckduckgo.com/?q='+encodeURIComponent(q);
+  if(e==='science') url='https://duckduckgo.com/?q='+encodeURIComponent(q+' (site:nasa.gov OR site:britannica.com OR site:scholar.google.com)');
+  if(e==='bing') url='https://www.bing.com/search?q='+encodeURIComponent(q);
+  if(e==='scholar') url='https://scholar.google.com/scholar?q='+encodeURIComponent(q);
+  window.open(url,'_blank');
+}
+
+function playBuiltIn(){
+  document.getElementById('gameFrame').src='game/index.html';
+}
+
+function loadLocalGame(input){
+  const files=[...input.files];
+  const index=files.find(f=>f.name.toLowerCase()==='index.html');
+  if(!index){alert('No index.html found');return;}
+  const url=URL.createObjectURL(index);
+  document.getElementById('gameFrame').src=url;
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
