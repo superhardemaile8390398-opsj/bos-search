@@ -1,72 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Bos – Beast of Stuff</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b0b0b">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0b0b0b;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    input {
-      width: 280px;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-    button {
-      margin-top: 10px;
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Bos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0b0b">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <h1>Bos</h1>
-  <input id="search" placeholder="Search inside Bos…" />
-  <button onclick="bosSearch()">Search</button>
 
-  <div id="result" style="margin-top:20px;"></div>
+<video id="startupVideo" playsinline muted preload="auto">
+  <source src="assets/bos_startup_final.mp4" type="video/mp4">
+</video>
 
-  <script>
-    function bosSearch() {
-      const q = document.getElementById("search").value.toLowerCase();
-      const result = document.getElementById("result");
+<div id="menu">
+  <img id="menuBg" src="assets/menu_bg.png">
+  <img id="startBtn" src="assets/start_button.svg">
+</div>
 
-      if (q.includes("settings")) {
-        result.textContent = "Bos Settings (internal)";
-      } else if (q.includes("help")) {
-        result.textContent = "Bos Help (internal)";
-      } else {
-        result.textContent = "No Bos result";
-      }
-    }
+<canvas id="game" width="800" height="450"></canvas>
 
-    // Service worker registration
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js")
-        .then(() => console.log("Bos service worker registered"))
-        .catch(err => console.error("SW error:", err));
-    }
-  </script>
+<script src="game.js"></script>
 </body>
 </html>
